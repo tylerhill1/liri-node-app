@@ -4,11 +4,14 @@ var keys = require("./keys");
 var Spotify = require('node-spotify-api');
 var spotify = new Spotify(keys.spotify);
 
+var axios = require("axios");
+
 
 
 var command = process.argv[2];
 
-//spotify-this-song
+
+//SPOTIFY-THIS-SONG
 if (command === "spotify-this-song") {
     
     //put song in searchable query
@@ -24,7 +27,7 @@ if (command === "spotify-this-song") {
     }
     
     //search the api
-    var search = function(song) {
+    var songSearch = function(song) {
         spotify.search({type: "track", query: song}, function(err, data) {
             if (err) {
                 return console.log('Error occurred: ' + err);
@@ -53,12 +56,96 @@ if (command === "spotify-this-song") {
 
             //recur with Ace of Base if no results
             else {
-                console.log("IS THIS WORKING?");
-                search("Ace of Base");
+                songSearch("Ace of Base");
             }
         });
     }
 
-    search(song);
+    songSearch(song);
 
 }   
+
+
+//MOVIE-THIS
+if (command === "movie-this") {
+
+    //put song in searchable query
+    var movie = "";
+
+    for (var i=3; i < process.argv.length; i++) {
+        if (movie === "") {
+            movie += process.argv[i] ;
+        }
+        else {
+            movie = movie + " " + process.argv[i];
+        }
+    }
+
+  //search the api
+var movieSearch = function(movie) {
+
+axios.get("http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=trilogy").then(
+  function(response) {
+
+      //checks if something returns
+    if (response.data.Response != "False") {
+    console.log("\nTitle: ");
+    console.log(response.data.Title);
+
+    console.log("\nRelease Year: ");
+    console.log(response.data.Year);
+
+    console.log("\nIMDB Rating: ");
+    console.log(response.data.imdbRating);
+
+    console.log("\nRotten Tomatoes Rating: ");
+    console.log(response.data.Ratings[1].Value);
+
+    console.log("\nCountry produced: ");
+    console.log(response.data.Country);
+
+    console.log("\nLanguage: ");
+    console.log(response.data.Language);
+
+    console.log("\nPlot: ");
+    console.log(response.data.Plot);
+
+    console.log("\nActors: ");
+    console.log(response.data.Actors + "\n");
+    }
+
+     //recur with Mr. Nobody if no results
+    else {
+        movieSearch("Mr. Nobody");
+    }
+
+  }) 
+  //checks for errors
+  .catch(function(error) {
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      console.log("---------------Data---------------");
+      console.log(error.response.data);
+      console.log("---------------Status---------------");
+      console.log(error.response.status);
+      console.log("---------------Status---------------");
+      console.log(error.response.headers);
+    } else if (error.request) {
+      // The request was made but no response was received
+      // `error.request` is an object that comes back with details pertaining to the error that occurred.
+      console.log(error.request);
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      console.log("Error", error.message);
+    }
+    console.log(error.config);
+  });
+
+//     }
+
+}
+
+movieSearch(movie);
+}
+
