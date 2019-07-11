@@ -5,10 +5,65 @@ var Spotify = require('node-spotify-api');
 var spotify = new Spotify(keys.spotify);
 
 var axios = require("axios");
+var request = require("request");
+
 
 
 
 var command = process.argv[2];
+
+//CONCERT-THIS
+if (command === "concert-this") {
+    
+    //put artist in searchable query
+    var artist = "";
+
+    for (var i=3; i < process.argv.length; i++) {
+        if (artist === "") {
+            artist += process.argv[i] ;
+        }
+        else {
+            artist = artist + " " + process.argv[i];
+        }
+    }
+    // && response.statusCode
+    //search the api
+    var artistSearch = function(artist) {
+        request("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp", function (error, data, body) {
+        console.log('error:', error); // Print the error if one occurred
+        console.log('statusCode:', data); // Print the response status code if a response was received
+        // console.log('body:', body); // Print the HTML for the Google homepage.
+        });
+            
+            //   //checks if something returns
+            // if (data.tracks.items.length != 0) {
+
+            //     console.log("\nArtist(s): ");
+            //     for (var i = 0; i < data.tracks.items[0].artists.length; i++) {
+            //         console.log(data.tracks.items[0].artists[i].name);
+            //     }
+    
+    
+            // console.log("\nSong: ");
+            // console.log(data.tracks.items[0].name);
+            
+            // console.log("\nPreview Link: ");
+            // console.log(data.tracks.items[0].preview_url);
+    
+            // console.log("\nAlbum: ");
+            // console.log(data.tracks.items[0].album.name);
+            // console.log("");
+            // }
+
+            // //recur with Ace of Base if no results
+            // else {
+            //     songSearch("Ace of Base");
+            // }
+    }
+
+    artistSearch(artist);
+
+}   
 
 
 //SPOTIFY-THIS-SONG
